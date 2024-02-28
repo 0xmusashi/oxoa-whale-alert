@@ -318,9 +318,78 @@ contract Oxoa is Ownable, VerifySignature {
 
     function buyNodeKey(
         uint256 _numberOfNodes,
-        address _refAddress
+        address _refAddress,
+        string calldata _discountCode
     ) external payable {
-        emit NewNode(_numberOfNodes, msg.sender, 1, nodePrice, 0, _refAddress);
+        if (bytes(_discountCode).length > 0) {
+            require(
+                discounts[_discountCode].percent > 0 &&
+                    discounts[_discountCode].count > 0,
+                "Invalid discount code"
+            );
+        }
+        uint256 subTotal = _numberOfNodes * nodePrice;
+        if (
+            bytes(_discountCode).length > 0 &&
+            discounts[_discountCode].percent > 0 &&
+            discounts[_discountCode].count > 0
+        ) {
+            subTotal =
+                (_numberOfNodes *
+                    nodePrice *
+                    (100 - discounts[_discountCode].percent)) /
+                100;
+            discounts[_discountCode].count--;
+        }
+
+        require(msg.value >= subTotal, "Not enough ether");
+
+        uint256 refAmount = 0;
+        if (
+            _refAddress != address(0) &&
+            _refAddress != msg.sender &&
+            subTotal > 0
+        ) {
+            uint256 ref = specialRefs[_refAddress] > 0
+                ? specialRefs[_refAddress]
+                : refPercent;
+            if (ref > 0) {
+                refAmount = (subTotal * ref) / 100;
+                if (refAmount > 0) {
+                    require(msg.value >= refAmount, "Not enough ether");
+                    TransferHelper.safeTransferETH(_refAddress, refAmount);
+
+                    refs[_refAddress].count += 1;
+                    refs[_refAddress].amount += refAmount;
+                }
+            }
+        }
+        if (msg.value - refAmount > 0) {
+            TransferHelper.safeTransferETH(
+                recipientAddress,
+                msg.value - refAmount
+            );
+        }
+
+        uint256 nodeId = (uint256(
+            keccak256(
+                abi.encodePacked(
+                    block.timestamp,
+                    msg.sender,
+                    refAmount,
+                    _refAddress
+                )
+            )
+        ) % (999_999_999_999 - 100_000_000_000 + 1)) + 100_000_000_000;
+
+        emit NewNode(
+            _numberOfNodes,
+            msg.sender,
+            nodeId,
+            nodePrice,
+            refAmount,
+            _refAddress
+        );
     }
 
     function claimOxoa(
