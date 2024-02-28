@@ -13,7 +13,7 @@ const REF_LINK = 'https://node.oxoa.games?ref=0x3E657D3CF4cb2104E6A5a6eD6f19aE23
 
 const provider = new ethers.providers.JsonRpcProvider(RPC);
 
-const ALERT_THRESHOLD = 10; // alert when someone buys 10 keys
+const ALERT_THRESHOLD = 5; // alert when someone buys 5 keys
 
 const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
 
