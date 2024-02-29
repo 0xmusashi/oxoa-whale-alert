@@ -17,8 +17,7 @@ const ALERT_THRESHOLD = 5; // alert when someone buys 5 keys
 
 const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
 
-const CHAT_ID = -1002025621317;
-const CHAT_ID_2 = -1002076861425;
+const CHAT_IDS = [-1002025621317, -1002076861425, -1002114899869];
 
 // Function to send an alert message
 async function sendAlert(_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount, _refAddress, txHash) {
@@ -33,8 +32,9 @@ async function sendAlert(_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount
     const opts = {
         parse_mode: 'HTML',
     }
-    await bot.sendMessage(CHAT_ID, message, opts);
-    await bot.sendMessage(CHAT_ID_2, message, opts);
+    for (const chatId of CHAT_IDS) {
+        await bot.sendMessage(chatId, message, opts);
+    }
 }
 
 /*
