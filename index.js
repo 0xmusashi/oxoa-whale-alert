@@ -51,6 +51,15 @@ function formatAddress(address) {
     return address.slice(0, 4) + '...' + address.slice(-3);
 }
 
+function getTierFromNodePrice(price) {
+    let prices = [-1.0];
+    for (const [_, value] of Object.entries(TIER_PRICE_MAP)) {
+        prices.push(value[0]);
+    }
+    let tier = prices.indexOf(parseFloat(price.toFixed(4)));
+    return tier;
+}
+
 function getTierKeysLeft(totalKeySale, currentTier) {
     let sum = 0;
     for (let tier = 1; tier <= currentTier; tier++) {
