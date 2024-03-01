@@ -139,6 +139,8 @@ contract.on('NewNode', async (_numberOfNodes, _owner, _nodeId, _nodePrice, _refA
 
     const numKeys = _numberOfNodes.toNumber();
 
+    console.log(`tx: ${event.transactionHash}`);
+
     if (numKeys >= ALERT_THRESHOLD) {
         await sendAlert(_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount, _refAddress, event.transactionHash, currentTier, totalKeySale);
     }
