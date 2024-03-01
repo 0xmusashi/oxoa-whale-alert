@@ -34,8 +34,8 @@ async function sendAlert(_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount
 
     const message =
         `<b>👨‍🦳 Ví <a href="${userUrl}">${formatAddress(_owner)}</a> vừa mua ${_numberOfNodes} 🔑 x ${price} $ETH = ${displayTotalPrice} $ETH </b>\n\n` +
-        `<b>🔗 Transaction mua: ${TX_EXPLORER_URL}${txHash}\n\n</b>` +
-        `<b>🤑 Mua key tại đây 👉 ${REF_LINK}</b>\n\n`
+        `<b>🔗 TXID: <a href="${TX_EXPLORER_URL}${txHash}">check tại đây</a>\n\n</b>` +
+        `<b>🤑 Mua key tại đây 👉 <a href="${REF_LINK}">tại đây</a></b>\n\n`
     const opts = {
         parse_mode: 'HTML',
     }
