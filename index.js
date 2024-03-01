@@ -19,14 +19,21 @@ const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
 
 const CHAT_IDS = [-1002025621317, -1002076861425, -1002114899869];
 
+function formatAddress(address) {
+    return address.slice(0, 4) + '...' + address.slice(-3);
+}
+
 // Function to send an alert message
 async function sendAlert(_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount, _refAddress, txHash) {
     const userUrl = `${ADDRESS_EXPLORER_URL}${_owner}`;
     const refUrl = `${ADDRESS_EXPLORER_URL}${_refAddress}`;
     const price = ethers.utils.formatUnits(_nodePrice);
 
+    const totalPrice = price * _numberOfNodes;
+    const displayTotalPrice = parseFloat(totalPrice.toFixed(6));
+
     const message =
-        `<b>👨‍🦳 Ví <a href="${userUrl}">${_owner}</a> vừa mua thêm ${_numberOfNodes} 🔑 (Giá 1 🔑: ${price} $ETH) </b>\n\n` +
+        `<b>👨‍🦳 Ví <a href="${userUrl}">${formatAddress(_owner)}</a> vừa mua ${_numberOfNodes} 🔑 x ${price} $ETH = ${displayTotalPrice} $ETH </b>\n\n` +
         `<b>🔗 Transaction mua: ${TX_EXPLORER_URL}${txHash}\n\n</b>` +
         `<b>🤑 Mua key tại đây 👉 ${REF_LINK}</b>\n\n`
     const opts = {
