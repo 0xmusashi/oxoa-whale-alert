@@ -97,9 +97,12 @@ async function sendAlert(_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount
 
     const message =
         `<b>👨‍🦳 Ví <a href="${userUrl}">${formatAddress(_owner)}</a> vừa mua ${_numberOfNodes} 🔑 x ${price} $ETH = ${displayTotalPrice} $ETH </b>\n\n` +
-        `Tổng số 🔑 Tier ${currentTier}: ${tierTarget} 🔑 - Đã bán: ${tierTarget - keysLeft} 🔑 -  Còn lại: ${keysLeft} 🔑\n\n` +
+        `<b>Tổng số 🔑 Tier ${currentTier}: ${tierTarget} 🔑</b>\n\n` +
+        `<b>Đã bán: ${tierTarget - keysLeft} 🔑</b>\n\n` +
+        `<b>Còn lại: ${keysLeft} 🔑</b>\n\n` +
         `<b>🔗 TXID: <a href="${TX_EXPLORER_URL}${txHash}">check tại đây</a>\n\n</b>` +
-        `<b>🤑 Mua key tại đây 👉 <a href="${REF_LINK}">tại đây</a></b>\n\n`
+        `<b>🤑 Mua key tại đây 👉 <a href="${REF_LINK}">tại đây</a></b>\n\n` +
+        `<b>💻 Hướng dẫn 👉 <a href="https://t.me/oxoavn/2941">tại đây</a></b>\n\n`
     const opts = {
         parse_mode: 'HTML',
     }
