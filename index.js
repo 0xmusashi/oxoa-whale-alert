@@ -132,34 +132,38 @@ Monitor for buy keys
 NewNode(uint256 _numberOfNodes, address _owner, uint256 _nodeId, uint256 _nodePrice, uint256 _refAmount, address _refAddress)
 */
 contract.on('NewNode', async (_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount, _refAddress, event) => {
-    const state = await contract._state();
-    const nodePrice = state['_nodePrice'];
-    const price = parseFloat(ethers.utils.formatUnits(nodePrice).toString());
-    const currentTier = getTierFromNodePrice(price);
+    try {
+        const state = await contract._state();
+        const nodePrice = state['_nodePrice'];
+        const price = parseFloat(ethers.utils.formatUnits(nodePrice).toString());
+        const currentTier = getTierFromNodePrice(price);
 
-    const filter = {
-        address: CONTRACT_ADDRESS,
-        topics: [
-            "0x448511bdc0685b88ba7db67a898512cd63b1a760d8beef3e3d10974907845333",
-            null, // _owner
-            null, // _nodePrice
-            null, // _refAddress
-        ]
-    }
+        const filter = {
+            address: CONTRACT_ADDRESS,
+            topics: [
+                "0x448511bdc0685b88ba7db67a898512cd63b1a760d8beef3e3d10974907845333",
+                null, // _owner
+                null, // _nodePrice
+                null, // _refAddress
+            ]
+        }
 
-    let totalKeySale = 0;
-    const events = await contract.queryFilter(filter);
-    for (const event of events) {
-        const args = event.args;
-        const numberOfNodes = args['_numberOfNodes'].toNumber();
-        totalKeySale += numberOfNodes;
-    }
+        let totalKeySale = 0;
+        const events = await contract.queryFilter(filter);
+        for (const event of events) {
+            const args = event.args;
+            const numberOfNodes = args['_numberOfNodes'].toNumber();
+            totalKeySale += numberOfNodes;
+        }
 
-    const numKeys = _numberOfNodes.toNumber();
+        const numKeys = _numberOfNodes.toNumber();
 
-    console.log(`tx: ${event.transactionHash}`);
+        console.log(`tx: ${event.transactionHash}`);
 
-    if (numKeys >= ALERT_THRESHOLD) {
-        await sendAlert(_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount, _refAddress, event.transactionHash, currentTier, totalKeySale);
+        if (numKeys >= ALERT_THRESHOLD) {
+            await sendAlert(_numberOfNodes, _owner, _nodeId, _nodePrice, _refAmount, _refAddress, event.transactionHash, currentTier, totalKeySale);
+        }
+    } catch (err) {
+        console.log('err: ', err);
     }
 });
